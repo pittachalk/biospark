@@ -1,0 +1,75 @@
+---
+title: "Exploring the Index File"
+output: html_document
+date: "2023-01-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE, message = FALSE, warning = FALSE,
+  cache = TRUE, cache.path = '.cache_knitr/explore_index_file/',
+  fig.width = 7, fig.height = 4, dpi = 300,
+  fig.path='figure/01_explore_index_file/'
+)
+```
+
+In this document, we are utilising various metrics to understand the properties of the Lake Malawi cichlid pan-genome graph built using `minigraph` using default parameters. We aim to get an idea of the openness of the pangenome, how many sites of structural variation (SV) there are and how widespread/private alleles are.
+
+## Setup
+```{r, cache=FALSE}
+library("readr")
+
+#theme_set(theme_classic())
+```
+
+## Data import
+```{r}
+df <- readr::read_delim(
+  paste0(
+    Sys.getenv("HOME"), 
+    "/code/biospark/data/BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens/BIOGRID-ORCS-SCREEN_INDEX-1.1.13.index.tab.txt"
+  ),
+  col_types = paste0(
+    "icccciific", # A-J
+    "cccccccccc", # K-T
+    "cccccccicc", # U-AD
+    "cccfcccc"    # AE-AL
+  ),
+  na = c("", "NA", "-")
+)
+
+head(df)
+```
+
+The following are useful columns to pay attention to:
+
+More info: https://wiki.thebiogrid.org/doku.php/orcs:downloads:screen_index
+
+##### Identifier
+`2.SOURCE_ID`, `4.AUTHOR_NAME`, `5.SCREEN_NAME`
+
+##### Quality
+`6.SCORES_SIZE`, `7.FULL_SIZE`, `8.FULL_SIZE_AVAILABLE`, `9.NUMBER_OF_HITS`
+
+##### Computational analysis
+`10.ANALYSIS`, `11.SIGNIFICANCE_INDICATOR`, `12.SIGNIFICANCE_CRITERIA`
+
+##### Screen category
+`13.THROUGHPUT`, `14.SCREEN_TYPE`, `15.SCREEN_FORMAT` (all 'Pool'), `16.EXPERIMENTAL_SETUP`
+
+##### Library and cells
+`21.LIBRARY` (probably not useful), `22.LIBRARY_TYPE`, `23.LIBRARY_METHODOLOGY` (22 and 23 probably equivalent)
+
+`25.CELL_LINE`, `26.CELL_TYPE`, `27.PHENOTYPE`
+
+`36.NOTES` (useful for humans to read)
+
+
+
+To do:
+
+See how unique each of them are.
+
+Which columns most useful and see if it's highly redundant.
+
+Also should work out the logic between knock in and knock out, vs CRISPRi and CRISPRn
