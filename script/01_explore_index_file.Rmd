@@ -18,6 +18,8 @@ In this document, we are utilising various metrics to understand the properties 
 ## Setup
 ```{r, cache=FALSE}
 library("readr")
+library("ggplot2")
+library("dplyr")
 
 #theme_set(theme_classic())
 ```
@@ -38,7 +40,7 @@ df <- readr::read_delim(
   na = c("", "NA", "-")
 )
 
-head(df)
+df
 ```
 
 The following are useful columns to pay attention to:
@@ -51,19 +53,85 @@ More info: https://wiki.thebiogrid.org/doku.php/orcs:downloads:screen_index
 ##### Quality
 `6.SCORES_SIZE`, `7.FULL_SIZE`, `8.FULL_SIZE_AVAILABLE`, `9.NUMBER_OF_HITS`
 
+```{r}
+table(df$FULL_SIZE_AVAILABLE)
+```
+
 ##### Computational analysis
 `10.ANALYSIS`, `11.SIGNIFICANCE_INDICATOR`, `12.SIGNIFICANCE_CRITERIA`
+
+```{r}
+table(df$ANALYSIS)
+```
 
 ##### Screen category
 `13.THROUGHPUT`, `14.SCREEN_TYPE`, `15.SCREEN_FORMAT` (all 'Pool'), `16.EXPERIMENTAL_SETUP`
 
+
 ##### Library and cells
 `21.LIBRARY` (probably not useful), `22.LIBRARY_TYPE`, `23.LIBRARY_METHODOLOGY` (22 and 23 probably equivalent)
 
+```{r}
+table(df$LIBRARY_TYPE)
+table(df$LIBRARY_METHODOLOGY)
+```
+
 `25.CELL_LINE`, `26.CELL_TYPE`, `27.PHENOTYPE`
+
+```{r}
+table(df$CELL_TYPE)
+```
+```{r}
+table(df$PHENOTYPE)
+```
+
+```{r}
+table(df$CONDITION_NAME)
+```
 
 `36.NOTES` (useful for humans to read)
 
+
+
+
+## Exploration plots
+
+```{r bar_librarymethod, fig.width=6, fig.height=3}
+ggplot(df, aes(LIBRARY_METHODOLOGY) ) + 
+  geom_histogram(stat='count') +
+  ggtitle("Types of CRISPR screen") + 
+  xlab(NULL) +  ylab("frequency") +
+  geom_text(aes(label = ..count..), vjust = -0.5, stat = "count") +
+  scale_y_continuous(expand = expansion(mult = c(.05, .1))) +
+  theme(aspect.ratio = 1)
+```
+
+```{r bar_celltype, fig.width=10, fig.height=15}
+ggplot(df, aes(CELL_TYPE) ) + 
+  geom_histogram(stat='count') +
+  ggtitle("Cell types in database") + 
+  xlab(NULL) +  ylab("frequency") +
+  geom_text(aes(label = ..count..), hjust = -0.2, stat = "count") +
+  scale_x_discrete(limits = rev) +
+  scale_y_continuous(expand = expansion(mult = c(.05, .1))) +
+  coord_flip()
+```
+
+```{r bar_phenotype, fig.width=7, fig.height=7}
+ggplot(df, aes(PHENOTYPE) ) + 
+  geom_histogram(stat='count') +
+  ggtitle("Phenotypes in database") + 
+  xlab(NULL) +  ylab("frequency") +
+  geom_text(aes(label = ..count..), hjust = -0.2, stat = "count") +
+  scale_x_discrete(limits = rev) +
+  scale_y_continuous(expand = expansion(mult = c(.05, .1))) +
+  coord_flip()
+```
+
+
+```{r}
+
+```
 
 
 To do:
@@ -73,3 +141,6 @@ See how unique each of them are.
 Which columns most useful and see if it's highly redundant.
 
 Also should work out the logic between knock in and knock out, vs CRISPRi and CRISPRn
+
+## What
+
