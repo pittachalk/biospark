@@ -29,8 +29,7 @@ library("dplyr")
 df <- readr::read_delim(
   paste0(
     Sys.getenv("HOME"), 
-    "/code/biospark/data/BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens/BIOGRID-ORCS-SCREEN_INDEX-1.1.13.index.tab.txt"
-  ),
+    "/code/biospark/data/BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens/BIOGRID-ORCS-SCREEN_INDEX-1.1.13.index.tab.txt"),
   col_types = paste0(
     "icccciific", # A-J
     "cccccccccc", # K-T
@@ -39,7 +38,15 @@ df <- readr::read_delim(
   ),
   na = c("", "NA", "-")
 )
+colnames(df)[1] <- "SCREEN_ID"
 
+# add broader category of cell types
+metadata_celltype <- readr::read_csv(
+  paste0(Sys.getenv("HOME"), "/code/biospark/data/metadata_celltype.csv"),
+  col_types = "ccc", na = c("", "NA", "-") ) %>% 
+  select(CELL_TYPE, CELL_TYPE_BROAD)
+
+df <- left_join(df, metadata_celltype, by='CELL_TYPE')
 df
 ```
 
@@ -67,35 +74,42 @@ table(df$ANALYSIS)
 ##### Screen category
 `13.THROUGHPUT`, `14.SCREEN_TYPE`, `15.SCREEN_FORMAT` (all 'Pool'), `16.EXPERIMENTAL_SETUP`
 
+```{r}
+table(df$EXPERIMENTAL_SETUP)
+```
 
-##### Library and cells
+
+##### Library
 `21.LIBRARY` (probably not useful), `22.LIBRARY_TYPE`, `23.LIBRARY_METHODOLOGY` (22 and 23 probably equivalent)
 
 ```{r}
 table(df$LIBRARY_TYPE)
-table(df$LIBRARY_METHODOLOGY)
 ```
 
+#### Cell
 `25.CELL_LINE`, `26.CELL_TYPE`, `27.PHENOTYPE`
 
+There are many cell lines, so I divided them into broader cateogories.
 ```{r}
-table(df$CELL_TYPE)
+table(df$CELL_TYPE_BROAD)
 ```
+
 ```{r}
 table(df$PHENOTYPE)
 ```
 
+There are `r length(table(df$CONDITION_NAME))` types of conditions.
 ```{r}
-table(df$CONDITION_NAME)
+head(table(df$CONDITION_NAME), 12)
 ```
 
+##### Other
 `36.NOTES` (useful for humans to read)
 
 
 
 
 ## Exploration plots
-
 ```{r bar_librarymethod, fig.width=6, fig.height=3}
 ggplot(df, aes(LIBRARY_METHODOLOGY) ) + 
   geom_histogram(stat='count') +
@@ -106,15 +120,34 @@ ggplot(df, aes(LIBRARY_METHODOLOGY) ) +
   theme(aspect.ratio = 1)
 ```
 
-```{r bar_celltype, fig.width=10, fig.height=15}
-ggplot(df, aes(CELL_TYPE) ) + 
+```{r bar_celltypebroad, fig.width=7, fig.height=7}
+ggplot(df, aes(CELL_TYPE_BROAD, fill = CELL_TYPE_BROAD) ) + 
+  geom_histogram(stat='count') +
+  ggtitle("Cell types in database") +
+  xlab(NULL) +  ylab("frequency") +
+  geom_text(aes(label = ..count..), hjust = -0.2, stat = "count") +
+  scale_x_discrete(limits = rev) +
+  scale_y_continuous(expand = expansion(mult = c(.05, .1))) +
+  coord_flip() +
+  theme(legend.position = 'none')
+```
+
+```{r bar_celltype, fig.width=10, fig.height=16}
+cell_type_ordered <- df %>% 
+  select(CELL_TYPE, CELL_TYPE_BROAD) %>% 
+  distinct() %>% 
+  arrange(CELL_TYPE_BROAD) %>% 
+  .$CELL_TYPE
+
+ggplot(df, aes(factor(CELL_TYPE, levels = cell_type_ordered), fill = CELL_TYPE_BROAD) ) + 
   geom_histogram(stat='count') +
   ggtitle("Cell types in database") + 
   xlab(NULL) +  ylab("frequency") +
   geom_text(aes(label = ..count..), hjust = -0.2, stat = "count") +
   scale_x_discrete(limits = rev) +
   scale_y_continuous(expand = expansion(mult = c(.05, .1))) +
-  coord_flip()
+  coord_flip() +
+  guides(fill = guide_legend(ncol = 1))
 ```
 
 ```{r bar_phenotype, fig.width=7, fig.height=7}
@@ -129,18 +162,35 @@ ggplot(df, aes(PHENOTYPE) ) +
 ```
 
 
-```{r}
-
+```{r facet_distribution, fig.width=12, fig.height=9}
+df %>% 
+  filter(PHENOTYPE %in% c("cell proliferation", "protein/peptide accumulation", "response to chemicals", "response to virus") ) %>% 
+  ggplot(aes(CELL_TYPE_BROAD, fill = CELL_TYPE_BROAD) ) +
+  geom_histogram(aes(alpha = EXPERIMENTAL_SETUP != "Timecourse"), color='black', stat='count')  +
+  facet_wrap(.~PHENOTYPE) +
+  xlab(NULL) +  ylab("frequency") +
+  geom_text(aes(label = ..count..), hjust = -0.2, stat = "count") +
+  scale_x_discrete(limits = rev) +
+  scale_y_continuous(expand = expansion(mult = c(.05, .15))) +
+  scale_alpha_manual(values=c(1, 0.35), breaks=c(T,F)) +
+  ggtitle("Cell type distribution across main phenotypes, transparent: timecourse experiments") +
+  coord_flip() +
+  theme_classic() +
+  theme(legend.position = 'none')
 ```
 
 
-To do:
+I also notice that most screens with cell proliferation as a phenotype are simply timecourses, with nothing in the experimental condition column. This suggests that they were simply observing cell growth.
+```{r}
+df %>% 
+  filter(PHENOTYPE == "cell proliferation") %>% 
+  .$EXPERIMENTAL_SETUP %>% table()
 
-See how unique each of them are.
+df %>% 
+  filter(PHENOTYPE == "cell proliferation") %>% 
+  .$CONDITION_NAME %>% is.na() %>% 
+  table()
+```
 
-Which columns most useful and see if it's highly redundant.
-
-Also should work out the logic between knock in and knock out, vs CRISPRi and CRISPRn
-
-## What
+Technically speaking, these timecourses need to be grouped together as one experiment, using the first three identifier columns.
 
