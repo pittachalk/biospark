@@ -1,8 +1,6 @@
 .*
 !.gitignore
-data/*
-!data/BIOGRID-ORCS-SCREEN_INDEX-1.1.13.index.tab.xlsx
-!data/metadata_celltype.csv
+data/BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens
 *.Rproj
 .Rproj.user
 script/figure/

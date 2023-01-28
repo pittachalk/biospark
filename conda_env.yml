@@ -1,0 +1,21 @@
+name: biospark
+channels:
+  - defaults
+  - conda-forge
+  - plotly
+dependencies:
+  - python
+  - pandas
+  - numpy
+  - ipykernel
+  - matplotlib
+  - plotly
+  - jupyter
+  - jupyterlab
+  - jupyterlab-plotly-extension
+  - dash
+  - python-kaleido
+  - scipy
+  - seaborn
+  - statsmodels
+  - scikit-learn
