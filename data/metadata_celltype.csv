@@ -1,115 +1,114 @@
-CELL_TYPE,CELL_TYPE_BROAD,NOT_SURE
-Acute Myeloid Leukemia Cell Line,blood,
-Adrenal Gland Neuroblastoma,endocrine,
-Anaplastic Large Cell Lymphoma Cell Line,blood,
-Anaplastic Thyroid Cancer Cell Line,endocrine,
-Askin Tumor,connective,
-Astrocytoma Cell Line,nervous,
-B-cell non-Hodgkin lymphoma cell line,blood,
-B-lymphoblastoid cell line,blood,
-B-lymphoma cell line,blood,
-Bladder Carcinoma,urinary,
-Bladder Transitional Cell Carcinoma Cell Line,urinary,
-Breast Adenocarcinoma Cell Line,breast,
-Breast Cancer Cell Line,breast,
-Burkitt Lymphoma Cell Line,blood,
-Cancer Cell Line,other,
-CD4+ T cell,blood,
-CD4+ T model of HIV latency,blood,
-Cecum Cancer Cell Line,colon,
-Cervical Adenocarcinoma Cell Line,female,
-Cholangiocarcinoma Cell,digestive,
-Chondrosarcoma,connective,
-Chronic Myelogenous Leukemia Cell Line,blood,
-Chronic Myeloid Leukemia Cell Line,blood,
-Colonic Adenocarcinoma Cell Line,colon,
-Colonic Cancer Cell Line,colon,
-Colonic Epithelium Cell Line,colon,
-Colorectal Adenocarcinoma Cell Line,colon,
-Colorectal Cancer Cell Line,colon,
-Colorectal Cell Line,colon,
-Diffuse Large B-cell Lymphoma Cell,blood,
-Embryonic Cell Line,embryo,
-Embryonic Kidney Cell Line,embryo,
-Embryonic Stem Cell Line,embryo,
-Endometrial Cancer Cell Line,female,
-Eosinophilic Leukemia Cell Line,blood,
-Epstein-Barr Virus (EBV)+ Burkitt lymphoma cell line (EBV latency I state),blood,
-Epstein-Barr Virus (EBV)+ lymphoblastoid cell line (EBV latency III state),blood,
-Erythroleukemia Cell Line,blood,
-Esophageal Cancer Cell Line,digestive,
-Esophageal Squamous Cell Carcinoma Cell Line,digestive,
-Ewing's Sarcoma Cell Line,connective,
-Fibroblast Cell Line,connective,
-Fibrosarcoma Cell Line,connective,
-Gall Bladder Cancer Cell Line,digestive,
-Gastric Adenocarcinoma Cell Line,digestive,
-Gastric Cancer Cell Line,figestive,
-Gingival Cancer Cell Line,squamous,
-Glioblastoma Cell Line,nervous,
-Glioma Cell Line,nervous,
-Gliosarcoma,nervous,
-Head and Neck Squamous Cell Carcinoma Cell Line,squamous,
-HeLa,general,
-Hepatitis B virus genome integrated cell line,other,
-Hepatoblastoma Cell Line,liver,
-Hepatocellular Carcinoma,liver,
-Hepatoma Cell Line,liver,
-HIV-1 Latency Cell Line,other,
-Huh-7 Cell,liver,
-Hypopharyngeal Squamous Cell Carcinoma Cell Line,squamous,
-Immortal Cell Line,general,
-iPSC derived cell line,general,
-Kidney Cell Line,endocrine,
-Large Cell Lung Cancer Cell Line,lung,
-Lung Adenocarcinoma Cell Line,lung,
-Lung Cancer Cell Line,lung,
-Lung Squamous Cell Carcinoma Cell Line,lung,
-Lymphoblastoid Cell Line,blood,
-Lymphoma Cell Line,blood,
-Lymphoma or Leukaemia Cell Line,blood,
-Mammary Epithelial Cell Line,breast,
-Mammary Gland Tumor Cell Line,breast,
-MDA-MB-435 cell,breast,
-Medulloblastoma Cell Line,nervous,
-Melanoma Cell Line,epithelium,
-Meningioma Cell Line,nervous,
-Microglial Cell Line,nervous,
-microvascular endothelial cell line,not_sure,n
-Monocytic Leukemia Cell Line,blood,
-Multiple Myeloma Cell Line,blood,
-nasopharyngeal carcinoma cell line,not_sure,n
-Neural Stem Cell Line,general,
-Neuroblastoma Cell Line,general,
-Neuroepithelioma Cell Line,general,
-NMC-G1 cell,nervous,
-Non-Small Cell Lung Adenocarcinoma Cell Line,lung,
-Non-Small Cell Lung Cancer Cell Line,lung,
-Oral Squamous Cell Carcinoma Cell Line,squamous,
-Osteosarcoma Cell Line,connective,
-Ovarian Cancer Cell Line,female,
-Ovary Adenocarcinoma Cell Line,female,
-OVCA-8 cell,female,
-Pancreatic Adenocarcinoma Cell Line,digestive,
-Pancreatic Cancer Cell Line,digestive,
-Pancreatic Ductal Adenocarcinoma Cell Line,digestive,
-Pre-B Acute Lymphoblastic Leukemia Cell Line,blood,
-Primary Effusion Lymphoma Cell Line,blood,
-Prostate Cancer Cell Line,male,
-Regulatory T cell,blood,
-Renal Cancer Cell Line,kidney,
-Renal Cell Carcinoma Cell Line,kidney,
-Retinal Pigment Epithelium Cell Line,retina,
-Rhabdomyosarcoma Cell Line,connective,
-Salivary Gland Cancer Cell,squamous,
-small cell lung cancer,lung,
-Squamous cell carcinoma cell line,squamous,
-T cell,blood,
-T-lymphoblastic leukemia cell line,blood,
-T-lymphoma cell line,blood,
-Tongue Cancer Cell Line,squamous,
-umbilical vein endothelial cell line,female,
-Urinary Bladder Cancer Cell Line,urinary,
-Urinary Bladder Squamous Cell Carcinoma Cell Line,urinary,
-Uterine Adenocarcinoma Cell Line,female,
-Uterine Carcinosarcoma Cell Line,female,
+﻿CELL_TYPE,CELL_TYPE_BROAD
+Acute Myeloid Leukemia Cell Line,Myeloid
+Adrenal Gland Neuroblastoma,Nervous / Glandular
+Anaplastic Large Cell Lymphoma Cell Line,Lymphoid
+Anaplastic Thyroid Cancer Cell Line,Thyroid / Glandular
+Askin Tumor,Connective
+Astrocytoma Cell Line,Nervous
+B-cell non-Hodgkin lymphoma cell line,Lymphoid
+B-lymphoblastoid cell line,Lymphoid
+B-lymphoma cell line,Lymphoid
+Bladder Carcinoma,Urinary
+Bladder Transitional Cell Carcinoma Cell Line,Urinary
+Breast Adenocarcinoma Cell Line,Breast / Glandular
+Breast Cancer Cell Line,Breast
+Burkitt Lymphoma Cell Line,Lymphoid
+CD4+ T cell,-
+CD4+ T model of HIV latency,-
+Cecum Cancer Cell Line,Gastrointestinal
+Cervical Adenocarcinoma Cell Line,Cervix / Glandular
+Cholangiocarcinoma Cell,Bile Duct / Gastrointestinal
+Chondrosarcoma,Connective
+Chronic Myelogenous Leukemia Cell Line,Myeloid
+Chronic Myeloid Leukemia Cell Line,Myeloid
+Colonic Adenocarcinoma Cell Line,Gastrointestinal / Glandular
+Colonic Cancer Cell Line,Gastrointestinal
+Colonic Epithelium Cell Line,Gastrointestinal / Glandular
+Colorectal Adenocarcinoma Cell Line,Gastrointestinal / Glandular
+Colorectal Cancer Cell Line,Gastrointestinal
+Colorectal Cell Line,Gastrointestinal
+Diffuse Large B-cell Lymphoma Cell,Lymphoid
+Embryonic Cell Line,Embryonic
+Embryonic Kidney Cell Line,Embryonic / Kidney
+Embryonic Stem Cell Line,Embryonic / Stem Cell
+Endometrial Cancer Cell Line,Uterus
+Eosinophilic Leukemia Cell Line,Myeloid
+Epstein-Barr Virus (EBV)+ Burkitt lymphoma cell line (EBV latency I state),Lymphoid
+Epstein-Barr Virus (EBV)+ lymphoblastoid cell line (EBV latency III state),Lymphoid
+Erythroleukemia Cell Line,Myeloid
+Esophageal Cancer Cell Line,Head and Neck
+Esophageal Squamous Cell Carcinoma Cell Line,Head and Neck / Squamous
+Ewing's Sarcoma Cell Line,Bone / Connective
+Fibroblast Cell Line,-
+Fibrosarcoma Cell Line,Connective
+Gall Bladder Cancer Cell Line,-
+Gastric Adenocarcinoma Cell Line,Gastrointestinal / Glandular
+Gastric Cancer Cell Line,Gastrointestinal
+Gingival Cancer Cell Line,Oral
+Glioblastoma Cell Line,Nervous
+Glioma Cell Line,Nervous
+Gliosarcoma,Nervous
+Head and Neck Squamous Cell Carcinoma Cell Line,Head and Neck / Squamous
+HeLa,Cervix
+Hepatitis B virus genome integrated cell line,-
+Hepatoblastoma Cell Line,Liver
+Hepatocellular Carcinoma,Liver
+Hepatoma Cell Line,Liver
+HIV-1 Latency Cell Line,-
+Huh-7 Cell,-
+Hypopharyngeal Squamous Cell Carcinoma Cell Line,Head and Neck / Squamous
+Immortal Cell Line,-
+iPSC derived cell line,-
+Kidney Cell Line,-
+Large Cell Lung Cancer Cell Line,Lung
+Lung Adenocarcinoma Cell Line,Lung / Glandular
+Lung Cancer Cell Line,Lung
+Lung Squamous Cell Carcinoma Cell Line,Lung / Squamous
+Lymphoblastoid Cell Line,Lymphoid
+Lymphoma Cell Line,Lymphoid
+Lymphoma or Leukaemia Cell Line,Lymphoid
+Mammary Epithelial Cell Line,Breast
+Mammary Gland Tumor Cell Line,Breast / Glandular
+MDA-MB-435 cell,Nervous
+Medulloblastoma Cell Line,Nervous
+Melanoma Cell Line,Skin / Epithelium
+Meningioma Cell Line,Nervous
+Microglial Cell Line,Nervous
+microvascular endothelial cell line,-
+Monocytic Leukemia Cell Line,Myeloid
+Multiple Myeloma Cell Line,Myeloid
+nasopharyngeal carcinoma cell line,-
+Neural Stem Cell Line,Nervous / Stem Cell
+Neuroblastoma Cell Line,Nervous
+Neuroepithelioma Cell Line,Nervous
+NMC-G1 cell,-
+Non-Small Cell Lung Adenocarcinoma Cell Line,Lung / Glandular
+Non-Small Cell Lung Cancer Cell Line,Lung / Glandular
+Oral Squamous Cell Carcinoma Cell Line,Oral / Squamous
+Osteosarcoma Cell Line,Bone
+Ovarian Cancer Cell Line,Ovary
+Ovary Adenocarcinoma Cell Line,Ovary / Glandular
+OVCA-8 cell,Ovary / Glandular
+Pancreatic Adenocarcinoma Cell Line,Pancreas / Glandular
+Pancreatic Cancer Cell Line,Pancreas
+Pancreatic Ductal Adenocarcinoma Cell Line,Pancreas / Glandular
+Pre-B Acute Lymphoblastic Leukemia Cell Line,Lymphoid
+Primary Effusion Lymphoma Cell Line,-
+Prostate Cancer Cell Line,Prostate
+Regulatory T cell,-
+Renal Cancer Cell Line,Kidney
+Renal Cell Carcinoma Cell Line,Kidney
+Retinal Pigment Epithelium Cell Line,Eye / Epithelium
+Rhabdomyosarcoma Cell Line,Connective
+Salivary Gland Cancer Cell,Oral / Glandular
+small cell lung cancer,Lung
+Squamous cell carcinoma cell line,-
+T cell,Lymphoid
+T-lymphoblastic leukemia cell line,-
+T-lymphoma cell line,Lymphoid
+Tongue Cancer Cell Line,Oral
+umbilical vein endothelial cell line,-
+Urinary Bladder Cancer Cell Line,Urinary
+Urinary Bladder Squamous Cell Carcinoma Cell Line,Urinary
+Uterine Adenocarcinoma Cell Line,Uterus / Glandular
+Uterine Carcinosarcoma Cell Line,Uterus

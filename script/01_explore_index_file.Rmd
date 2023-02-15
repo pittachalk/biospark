@@ -20,13 +20,11 @@ In this document, we are utilising various metrics to understand the properties 
 library("readr")
 library("ggplot2")
 library("dplyr")
-
-#theme_set(theme_classic())
 ```
 
 ## Data import
 ```{r}
-df <- readr::read_delim(
+df_raw <- readr::read_delim(
   paste0(
     Sys.getenv("HOME"), 
     "/code/biospark/data/BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens/BIOGRID-ORCS-SCREEN_INDEX-1.1.13.index.tab.txt"),
@@ -38,7 +36,7 @@ df <- readr::read_delim(
   ),
   na = c("", "NA", "-")
 )
-colnames(df)[1] <- "SCREEN_ID"
+colnames(df_raw)[1] <- "SCREEN_ID"
 
 # add broader category of cell types
 metadata_celltype <- readr::read_csv(
@@ -46,7 +44,18 @@ metadata_celltype <- readr::read_csv(
   col_types = "ccc", na = c("", "NA", "-") ) %>% 
   select(CELL_TYPE, CELL_TYPE_BROAD)
 
-df <- left_join(df, metadata_celltype, by='CELL_TYPE')
+# add broader category for cancer cell lines
+metadata_celltype_cancer <- readr::read_csv(
+  paste0(Sys.getenv("HOME"), "/code/biospark/data/metadata_celltype_cancer.csv"),
+  col_types = "ccc", na = c("", "NA", "-") ) %>% 
+  select(CELL_LINE, CELL_TYPE_BROAD)
+
+
+df <- bind_rows(
+  filter(df_raw, CELL_TYPE != "Cancer Cell Line") %>% left_join(metadata_celltype, by='CELL_TYPE'),
+  filter(df_raw, CELL_TYPE == "Cancer Cell Line") %>% left_join(distinct(metadata_celltype_cancer), by='CELL_LINE')
+)
+
 df
 ```
 
@@ -107,8 +116,6 @@ head(table(df$CONDITION_NAME), 12)
 `36.NOTES` (useful for humans to read)
 
 
-
-
 ## Exploration plots
 ```{r bar_librarymethod, fig.width=6, fig.height=3}
 ggplot(df, aes(LIBRARY_METHODOLOGY) ) + 
@@ -120,7 +127,8 @@ ggplot(df, aes(LIBRARY_METHODOLOGY) ) +
   theme(aspect.ratio = 1)
 ```
 
-```{r bar_celltypebroad, fig.width=7, fig.height=7}
+Distribution of broad cell type categories.
+```{r bar_celltypebroad, fig.width=7, fig.height=9}
 ggplot(df, aes(CELL_TYPE_BROAD, fill = CELL_TYPE_BROAD) ) + 
   geom_histogram(stat='count') +
   ggtitle("Cell types in database") +
@@ -132,14 +140,18 @@ ggplot(df, aes(CELL_TYPE_BROAD, fill = CELL_TYPE_BROAD) ) +
   theme(legend.position = 'none')
 ```
 
+Distribution of cell types in the database. Note that "Cancer Cell Line" is excluded because they could come from multiple broader categories.
 ```{r bar_celltype, fig.width=10, fig.height=16}
-cell_type_ordered <- df %>% 
+cell_type_ordered <- df %>%
+  filter(CELL_TYPE != "Cancer Cell Line") %>% 
   select(CELL_TYPE, CELL_TYPE_BROAD) %>% 
   distinct() %>% 
   arrange(CELL_TYPE_BROAD) %>% 
   .$CELL_TYPE
 
-ggplot(df, aes(factor(CELL_TYPE, levels = cell_type_ordered), fill = CELL_TYPE_BROAD) ) + 
+df %>%
+  filter(CELL_TYPE != "Cancer Cell Line") %>% 
+  ggplot(aes(factor(CELL_TYPE, levels = cell_type_ordered), fill = CELL_TYPE_BROAD) ) + 
   geom_histogram(stat='count') +
   ggtitle("Cell types in database") + 
   xlab(NULL) +  ylab("frequency") +
@@ -150,6 +162,7 @@ ggplot(df, aes(factor(CELL_TYPE, levels = cell_type_ordered), fill = CELL_TYPE_B
   guides(fill = guide_legend(ncol = 1))
 ```
 
+Phenotypes in database.
 ```{r bar_phenotype, fig.width=7, fig.height=7}
 ggplot(df, aes(PHENOTYPE) ) + 
   geom_histogram(stat='count') +
@@ -161,8 +174,8 @@ ggplot(df, aes(PHENOTYPE) ) +
   coord_flip()
 ```
 
-
-```{r facet_distribution, fig.width=12, fig.height=9}
+This shows the distribution of cell types across the major phenotypes. In transparent are samples which have a `Timecourse` setup.
+```{r facet_distribution, fig.width=12, fig.height=15}
 df %>% 
   filter(PHENOTYPE %in% c("cell proliferation", "protein/peptide accumulation", "response to chemicals", "response to virus") ) %>% 
   ggplot(aes(CELL_TYPE_BROAD, fill = CELL_TYPE_BROAD) ) +
@@ -179,7 +192,6 @@ df %>%
   theme(legend.position = 'none')
 ```
 
-
 I also notice that most screens with cell proliferation as a phenotype are simply timecourses, with nothing in the experimental condition column. This suggests that they were simply observing cell growth.
 ```{r}
 df %>% 
@@ -192,5 +204,35 @@ df %>%
   table()
 ```
 
-Technically speaking, these timecourses need to be grouped together as one experiment, using the first three identifier columns.
+## More plots with just cell proliferation
+We decide that we will focus only on samples which are annotated with a `cell proliferation` phenotype.
+
+```{r}
+df_filtered <- filter(df, PHENOTYPE == "cell proliferation")
+```
+
+Experiment types:
+```{r subset-bar_librarymethod, fig.width=6, fig.height=3}
+ggplot(df_filtered, aes(LIBRARY_METHODOLOGY) ) + 
+  geom_histogram(stat='count') +
+  ggtitle("Types of CRISPR screen") + 
+  xlab(NULL) +  ylab("frequency") +
+  geom_text(aes(label = ..count..), vjust = -0.5, stat = "count") +
+  scale_y_continuous(expand = expansion(mult = c(.05, .1))) +
+  theme(aspect.ratio = 1)
+```
+
+Distribution of broad cell types in this subset.
+```{r subset-bar_celltypebroad, fig.width=7, fig.height=9}
+ggplot(df_filtered, aes(CELL_TYPE_BROAD, fill = CELL_TYPE_BROAD) ) + 
+  geom_histogram(stat='count') +
+  ggtitle("Cell types in database (cell proliferation)") +
+  xlab(NULL) +  ylab("frequency") +
+  geom_text(aes(label = ..count..), hjust = -0.2, stat = "count") +
+  scale_x_discrete(limits = rev) +
+  scale_y_continuous(expand = expansion(mult = c(.05, .1))) +
+  coord_flip() +
+  theme(legend.position = 'none')
+```
+
 
