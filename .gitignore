@@ -4,3 +4,4 @@ data/BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens
 *.Rproj
 .Rproj.user
 script/figure/
+__pycache__/

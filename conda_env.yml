@@ -19,3 +19,4 @@ dependencies:
   - seaborn
   - statsmodels
   - scikit-learn
+  - tqdm
