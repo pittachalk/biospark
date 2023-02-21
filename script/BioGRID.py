@@ -13,7 +13,7 @@ def hit_search(screen_list, x, group):
     hit_list = []
     alias_list = []
     
-    for screen_id in group['#SCREEN_ID']:
+    for screen_id in group['SCREEN_ID']:
         
         screen_match = [match for match in screen_list if 'SCREEN_' + str(screen_id) + '-' in match][0]
         df_screen = pd.read_csv(screen_match, sep='\t')

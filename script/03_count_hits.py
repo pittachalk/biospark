@@ -9,11 +9,11 @@ import tqdm
 import re
 from pathlib import Path
 
-directory = Path(__file__).resolve().parent.parent.joinpath("data/")
+directory = Path(__file__).resolve().parent.parent
 
 # read the compiled hit list
 # setting the first column containing the broad cell types as the index
-df = pd.read_csv(directory.joinpath('hit_list.csv'), index_col=0)
+df = pd.read_csv(directory.joinpath('data/hit_list.csv'), index_col=0)
 
 # %%
 # for each broad cell type...
@@ -57,7 +57,7 @@ for i in tqdm.tqdm(range(df.shape[0])):
         title_font_size=30
     )
     fig.update_traces(showlegend=False)
-    fig.write_html(directory.joinpath(f"figure/hitHistogram_{current_cell}.html"))
+    fig.write_html(directory.joinpath(f"script/figure/03_count_hits/hitHistogram_{current_cell}.html"))
 
 
 # %%
