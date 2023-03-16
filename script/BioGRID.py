@@ -33,12 +33,12 @@ def hit_search(screen_list, x, group):
 def filter_essential_genes(directory, df_hit):
     
     # FIND LISTS OF ESSENTIAL AND NON-ESSENTIAL GENES FROM DepMap
-    non_essential_genes = pd.read_csv(directory + '/Achilles/' + 'AchillesNonessentialControls.csv')['Gene'].tolist()
+    non_essential_genes = pd.read_csv(directory.joinpath('Achilles/AchillesNonessentialControls.csv'))['Gene'].tolist()
     non_essential_genes, non_essential_gene_ids = [x.split(' ')[0] for x in non_essential_genes], [x.split(' ')[1] for x in non_essential_genes]
     non_essential_gene_ids = [x[1:-1] for x in non_essential_gene_ids]
     
-    df_essential_common = pd.read_csv(directory + '/Achilles/' + 'AchillesCommonEssentialControls.csv')
-    df_essential_infer = pd.read_csv(directory + '/Achilles/' + 'CRISPRInferredCommonEssentials.csv').rename(columns={'Essentials':'Gene'})
+    df_essential_common = pd.read_csv(directory.joinpath('Achilles/AchillesCommonEssentialControls.csv'))
+    df_essential_infer = pd.read_csv(directory.joinpath('Achilles/CRISPRInferredCommonEssentials.csv')).rename(columns={'Essentials':'Gene'})
     #df_essential_intersect = pd.merge(df_essential_common, df_essential_infer, how='inner', on='Gene')
     essential_genes = pd.concat([df_essential_common, df_essential_infer]).drop_duplicates().sort_values(by=['Gene'])['Gene'].tolist()
     essential_genes, essential_gene_ids = [x.split(' ')[0] for x in essential_genes], [x.split(' ')[1] for x in essential_genes]
