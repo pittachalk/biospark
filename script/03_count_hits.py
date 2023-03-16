@@ -13,7 +13,7 @@ directory = Path(__file__).resolve().parent.parent
 
 # read the compiled hit list
 # setting the first column containing the broad cell types as the index
-df = pd.read_csv(directory.joinpath('data/hit_list.csv'), index_col=0)
+df = pd.read_csv(directory.joinpath('data/filtered_hit_list.csv'), index_col=0)
 
 # %%
 # for each broad cell type...
