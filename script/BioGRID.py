@@ -7,6 +7,7 @@
 
 import pandas as pd
 import math
+from pyparsing import common_html_entity
 import tqdm
 
 def hit_search(screen_list, x, group):
@@ -30,6 +31,7 @@ def hit_search(screen_list, x, group):
     
     return hit_list, alias_list
 
+
 def filter_essential_genes(directory, df_hit):
     
     # FIND LISTS OF ESSENTIAL AND NON-ESSENTIAL GENES FROM DepMap
@@ -44,13 +46,24 @@ def filter_essential_genes(directory, df_hit):
     essential_genes, essential_gene_ids = [x.split(' ')[0] for x in essential_genes], [x.split(' ')[1] for x in essential_genes]
     essential_gene_ids = [x[1:-1] for x in essential_gene_ids]
 
-    filtered_cell_hit_dict = {}
+    # retrieve all possible gene names and aliases for the essential genes
+    df_gene_aliases = pd.read_table(directory.joinpath('homo_sapiens_gene_id.txt'))
+    df_gene_aliases = pd.read_table(directory.joinpath('homo_sapiens_gene_id.txt'), dtype={'GeneID': str}).set_index("GeneID")
+    df_gene_aliases_subset = df_gene_aliases.loc[essential_gene_ids]
 
+
+    aliases = [x.split(', ') for x in df_gene_aliases_subset["Aliases"].dropna() ]
+    aliases = [item for sublist in aliases for item in sublist]
+
+    essential_names_and_aliases = df_gene_aliases_subset["Symbol"].to_list() + aliases
+
+
+    filtered_cell_hit_dict = {}
     for i in tqdm.tqdm(list(range(len(df_hit)))[0:]):
 
         hit_list = df_hit.iloc[i][1:] 
         hit_list = hit_list[~hit_list.isnull()] # drop nan values
-        filtered_hit_list = [x for x in hit_list if x not in essential_genes]
+        filtered_hit_list = [x for x in hit_list if x not in essential_names_and_aliases]
         
         filtered_cell_hit_dict[df_hit.index[i]] = filtered_hit_list
 
