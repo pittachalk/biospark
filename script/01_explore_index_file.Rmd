@@ -235,4 +235,7 @@ ggplot(df_filtered, aes(CELL_TYPE_BROAD, fill = CELL_TYPE_BROAD) ) +
   theme(legend.position = 'none')
 ```
 
-
+Write filtered data frame focusing only on the "cell proliferation" screens.
+```{r}
+write_csv(df_filtered, paste0(Sys.getenv("HOME"), "/code/biospark/data/index_file_polished.csv") )
+```
