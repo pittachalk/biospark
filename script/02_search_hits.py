@@ -9,19 +9,22 @@ import pandas as pd
 import glob
 import tqdm
 from pathlib import Path
-from BioGRID import hit_search
+
+from BioGRID import hit_search, filter_essential_genes
 
 directory = Path(__file__).resolve().parent.parent.joinpath("data/")
-threshold = 10 # filter top % of each hit list
 
+#directory = '/Users/alymakhlouf/Desktop/biospark/data/'
 
 # SELECT ONLY TIMECOURSE, INHIBITION/KNOCKOUT EXPERIMENTS
+
 df = pd.read_csv(directory.joinpath('index_file_polished.csv'))
 df = df[df['EXPERIMENTAL_SETUP'] == 'Timecourse']
 df = df[df['LIBRARY_METHODOLOGY'] != 'Activation']
 
-
 # EXTRACT UNIQUE AND NON-UNIQUE, SINGLE AND MULTIPLE CELL TYPES
+
+
 cell_type_broad = [i for i in df.CELL_TYPE_BROAD.unique()]
 cell_type_broad_single = [i for i in set([i for j in [i.split(' / ') 
                     for i in df.CELL_TYPE_BROAD.unique()] for i in j])]
@@ -39,8 +42,15 @@ screen_list = glob.glob(str(directory.joinpath("BIOGRID-ORCS-ALL-homo_sapiens-1.
 
 
 # GROUP CELLS BASED ON UNIQUE (SINGLE & MULTIPLE) BROAD CELL TYPE
+
+
+x = 10 # filter top x% of each hit list
+
 cell_hit_dict = {}
 cell_alias_dict = {}
+
+number_screens_dict = {} # track number of screens per broad cell type - needed for normalisation
+
 
 for cell_broad in tqdm.tqdm(cell_type_broad_all[0:]):
     
@@ -53,10 +63,12 @@ for cell_broad in tqdm.tqdm(cell_type_broad_all[0:]):
     if len(group) == 0:
         continue
     
-    cell_hit_dict[cell_broad_key], cell_alias_dict[cell_broad_key] = hit_search(screen_list,threshold,group)
+    cell_hit_dict[cell_broad_key], cell_alias_dict[cell_broad_key] = hit_search(screen_list,x,group)
+    number_screens_dict[cell_broad_key] = len(group)
 
 
 # GROUP CELLS BASED ON NON-UNIQUE BROAD CELL TYPE
+
 
 for cell_broad in tqdm.tqdm(cell_type_broad_non_unique[0:]):
     
@@ -66,13 +78,29 @@ for cell_broad in tqdm.tqdm(cell_type_broad_non_unique[0:]):
 
     group = df[df['CELL_TYPE_BROAD'].str.contains(cell_broad)]
     
-    cell_hit_dict[cell_broad_key], cell_alias_dict[cell_broad_key] = hit_search(screen_list,threshold,group)
+    
+    cell_hit_dict[cell_broad_key], cell_alias_dict[cell_broad_key] = hit_search(screen_list,x,group)
 
     # delete redundant (duplicated) entries
     if cell_broad in cell_type_broad_non_unique_subset:
         cell_hit_dict.pop(cell_broad_key)
         cell_alias_dict.pop(cell_broad_key)
+        continue
+    
+    number_screens_dict[cell_broad_key] = len(group)
 
-pd.DataFrame.from_dict(cell_hit_dict, orient='index').to_csv(directory.joinpath('hit_list.csv'))
-pd.DataFrame.from_dict(cell_alias_dict, orient='index').to_csv(directory.joinpath('alias_list.csv'))
+df_hit = pd.DataFrame.from_dict(cell_hit_dict, orient='index')
+df_alias = pd.DataFrame.from_dict(cell_alias_dict, orient='index')
+df_number_screens = pd.DataFrame.from_dict(number_screens_dict, orient='index').rename(columns={0:'# Screens'})
 
+df_hit = pd.concat([df_number_screens, df_hit], axis=1)
+df_alias = pd.concat([df_number_screens, df_alias], axis=1)
+
+df_hit.to_csv(directory.joinpath('unfiltered_hit_list.csv'))
+df_alias.to_csv(directory.joinpath('unfiltered_alias_list.csv'))
+
+
+# FILTER OUT ESSENTIAL GENES
+
+df_hit_filtered = filter_essential_genes(directory, df_hit)
+df_hit_filtered.to_csv(directory.joinpath('filtered_hit_list.csv'))
