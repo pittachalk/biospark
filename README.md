@@ -21,6 +21,7 @@ By default, these raw data files are not committed onto GitHub because of their 
 
 Also included in `data/` is `metadata_celltype.csv`, which is a (draft) mapping of the cell lines (`CELL_TYPE`) into broader cell types (`CELL_TYPE_BROAD`).
 
+Manually download `homo_sapiens_gene_id.txt` from NCBI https://www.ncbi.nlm.nih.gov/gene/?term=Homo+sapiens.
 
 ## Environment setup
 ### Conda (Python)
