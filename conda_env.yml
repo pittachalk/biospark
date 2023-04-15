@@ -13,7 +13,7 @@ dependencies:
   - jupyter
   - jupyterlab
   - jupyterlab-plotly-extension
-  - dash
+  - dash>2.9
   - python-kaleido
   - scipy
   - seaborn
