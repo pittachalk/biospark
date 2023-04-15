@@ -5,6 +5,7 @@
 @author: alymakhlouf
 """
 
+# %%
 import pandas as pd
 import glob
 import tqdm
@@ -13,17 +14,22 @@ from pathlib import Path
 from BioGRID import hit_search, filter_essential_genes
 
 directory = Path(__file__).resolve().parent.parent.joinpath("data/")
+screen_list = glob.glob(str(directory.joinpath("BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens/*.txt")))
 
-#directory = '/Users/alymakhlouf/Desktop/biospark/data/'
-
+# %%
+# IMPORT INDEX FILE FILTERED FOR CELL PROLIFERATION SCREENS
 # SELECT ONLY TIMECOURSE, INHIBITION/KNOCKOUT EXPERIMENTS
 
 df = pd.read_csv(directory.joinpath('index_file_polished.csv'))
 df = df[df['EXPERIMENTAL_SETUP'] == 'Timecourse']
 df = df[df['LIBRARY_METHODOLOGY'] != 'Activation']
 
+# %%
 # EXTRACT UNIQUE AND NON-UNIQUE, SINGLE AND MULTIPLE CELL TYPES
-
+# e.g. SINGLE: Lung
+#      MULTIPLE: Lung / Squamous
+# NON_UNIQUE refers to things that always show up as a component of 
+# multiple cell types and never on its own
 
 cell_type_broad = [i for i in df.CELL_TYPE_BROAD.unique()]
 cell_type_broad_single = [i for i in set([i for j in [i.split(' / ') 
@@ -38,11 +44,9 @@ cell_type_broad_non_unique_subset = [x for x in set(cell_type_broad_non_unique)
 cell_type_broad_non_unique = [i for i in set([j for j in cell_type_broad_single 
                           for k in cell_type_broad_multiple if j in k])]    
 
-screen_list = glob.glob(str(directory.joinpath("BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens/*.txt")))
 
-
+# %%
 # GROUP CELLS BASED ON UNIQUE (SINGLE & MULTIPLE) BROAD CELL TYPE
-
 
 x = 10 # filter top x% of each hit list
 
@@ -67,8 +71,8 @@ for cell_broad in tqdm.tqdm(cell_type_broad_all[0:]):
     number_screens_dict[cell_broad_key] = len(group)
 
 
+# %%
 # GROUP CELLS BASED ON NON-UNIQUE BROAD CELL TYPE
-
 
 for cell_broad in tqdm.tqdm(cell_type_broad_non_unique[0:]):
     
@@ -89,6 +93,7 @@ for cell_broad in tqdm.tqdm(cell_type_broad_non_unique[0:]):
     
     number_screens_dict[cell_broad_key] = len(group)
 
+# %%
 df_hit = pd.DataFrame.from_dict(cell_hit_dict, orient='index')
 df_alias = pd.DataFrame.from_dict(cell_alias_dict, orient='index')
 df_number_screens = pd.DataFrame.from_dict(number_screens_dict, orient='index').rename(columns={0:'# Screens'})
@@ -100,7 +105,11 @@ df_hit.to_csv(directory.joinpath('unfiltered_hit_list.csv'))
 df_alias.to_csv(directory.joinpath('unfiltered_alias_list.csv'))
 
 
+# %%
 # FILTER OUT ESSENTIAL GENES
-
+# these are previously already known CRISPR hits from DepMap
 df_hit_filtered = filter_essential_genes(directory, df_hit)
+
+# %%
+# WRITE RESULTS
 df_hit_filtered.to_csv(directory.joinpath('filtered_hit_list.csv'))
