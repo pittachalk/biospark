@@ -4,7 +4,6 @@
 # %%
 import pandas as pd
 import numpy as np
-import plotly.express as px
 import tqdm
 import re
 from pathlib import Path
@@ -16,11 +15,21 @@ directory = Path(__file__).resolve().parent.parent
 df = pd.read_csv(directory.joinpath('data/filtered_hit_list.csv'), index_col=0)
 
 # %%
+# initialise empty master data frame
+column_names_ordered = ['cell_type', 'gene', 'num_hits', 'num_screens']
+df_master = pd.DataFrame(
+    columns = column_names_ordered
+)
+
+# %%
+# ITERATE THROUGH THE BROAD CELL TYPES
+# COUNT THE NUMBER OF HITS FOR A GENE IN EACH CELL TYPE
+
 # for each broad cell type...
 for i in tqdm.tqdm(range(df.shape[0])):
 
     # get occurences of genes 
-    current_hits = df.iloc[i]
+    current_hits = df.iloc[i, 1:]
     current_hits = current_hits.dropna()
 
     # retrieve cell type, remove spaces and substituting slashes
@@ -33,31 +42,38 @@ for i in tqdm.tqdm(range(df.shape[0])):
     df_subset = pd.DataFrame({'gene': genes, 'num_hits': counts})
     df_subset['num_hits'] = df_subset['num_hits'].astype("category")
 
-    # for each category of num_hits, join the genes as a single string
-    tmp_df = (df_subset
-        .groupby('num_hits')
-        .agg({'gene': [lambda x: ', '.join(x), 'count']})
-    )
-    df_summary = (tmp_df
-        .loc[:, "gene"]
-        .rename(columns={'<lambda_0>': "Genes", 'count': "Frequency"})
-        .reset_index()
-    )
+    # add cell name column
+    df_subset['cell_type'] = current_cell
 
-    # create interactive bar chart to visualise this data 
-    fig = px.bar(df_summary, 
-        x="num_hits", y="Frequency", 
-        hover_data={'Genes': True, 'num_hits': False},
-        template="seaborn"
-    )
-    fig.update_layout(hovermode='x', 
-        xaxis_title="Number of Hits", 
-        yaxis_title="Frequency",
-        title_text=f"Gene hits in {df.index[i]} screens",
-        title_font_size=30
-    )
-    fig.update_traces(showlegend=False)
-    fig.write_html(directory.joinpath(f"script/figure/03_count_hits/hitHistogram_{current_cell}.html"))
+    # add total number of screens done
+    df_subset['num_screens'] = df.iloc[i, 0]
 
+    # rearrange order of columns
+    df_subset = df_subset[column_names_ordered]
 
+    # concatenate to master dataframe
+    df_master = pd.concat([df_master, df_subset])
+
+# %%
+df_master['num_screens'] = df_master['num_screens'].astype(int)
+
+# %%
+# add Ensembl ID to the genes
+gene_id_mapping = (
+    pd.read_table(directory.joinpath('data/homo_sapiens_gene_id_mapping.txt'))
+      .rename(columns={'Symbol': 'gene', 'EnsemblID': 'gene_ensembl'})
+)
+
+df_master = (df_master
+    .merge(gene_id_mapping[['gene', 'gene_ensembl']], how='left', on='gene')
+    .sort_values(by=['cell_type', 'num_hits'])
+    .reset_index(drop=True)
+)
+
+# %%
+# write summarised data frame  
+(df_master
+    .to_csv(directory.joinpath('data/filtered_hit_list_summarised.csv'), index=False)
+)
+ 
 # %%
