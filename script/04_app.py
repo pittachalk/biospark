@@ -13,8 +13,14 @@ directory = Path(__file__).resolve().parent.parent
 # read summarised data frame, renaming columns to be human friendly
 df = pd.read_csv(directory.joinpath('data/filtered_hit_list_summarised.csv'))
 df = df.rename(
-    columns={'cell_type': "Cell Type", 'gene': 'Gene', 
-             'num_hits': 'Number of Hits', 'gene_ensembl': "Ensembl ID"})
+    columns={
+        'cell_type': "Cell Type", 
+        'gene': 'Gene', 
+        'num_hits': 'Number of Hits',
+        'num_screens': "Number of Screens",
+        'gene_ensembl': "Ensembl ID"
+    }
+)
 
 app = Dash(__name__)
 
