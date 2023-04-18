@@ -109,7 +109,7 @@ df_alias.to_csv(directory.joinpath('unfiltered_alias_list.csv'))
 # FILTER OUT ESSENTIAL GENES
 # these are previously already known CRISPR hits from DepMap
 df_hit_filtered = filter_essential_genes(directory, df_hit)
-
+df_hit_filtered.insert(0, '# Screens', df_hit['# Screens'].values)
 # %%
 # WRITE RESULTS
 df_hit_filtered.to_csv(directory.joinpath('filtered_hit_list.csv'))
