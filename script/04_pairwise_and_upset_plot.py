@@ -37,8 +37,10 @@ pairs = list(itertools.permutations(broad_cell_types,2))
 pairs_upset = [] # make pairs list format compatible with upsetplot library
 counts_upset = [] # store count values for upset plot
 
-    
-for j, pair in enumerate(pairs[0:]):
+# initialise dataframe to be written
+df_intersect = pd.DataFrame(data=None, columns=["cell_type1", "cell_type2", "n_intersect", "n_genes1", "intersect_list"]) 
+
+for j, pair in enumerate(pairs):
 
     pairs_upset.append(list(pair))
     
@@ -46,7 +48,15 @@ for j, pair in enumerate(pairs[0:]):
     genes_2 = np.array(df.loc[df['cell_type'] == pair[1]]['gene']) # gene list for broad cell type 2
     
     # find intersection size of hit genes between the two broad cell types
-    counts_upset.append(len(np.intersect1d(genes_1, genes_2)))
+    genes_intersect = np.intersect1d(genes_1, genes_2)
+    counts_upset.append(len(genes_intersect))
+
+    # concatenate to dataframe
+    tmp_df = pd.DataFrame({'cell_type1': [pair[0]], 'cell_type2': [pair[1]],
+                           'n_intersect': [len(genes_intersect)], 
+                           'n_genes1': [len(genes_1)], 
+                           'intersect_list': ','.join(genes_intersect)})
+    df_intersect = pd.concat([df_intersect, tmp_df], axis = 0)
 
 # %%    
 # take subsets of the lists of all pairs and all intersections matching each broad cell type
@@ -70,4 +80,23 @@ for i, cell_type in enumerate(tqdm.tqdm(broad_cell_types)):
     
     count += subset # update subset to move on to the next broad cell type
 
-  # %%
+
+# %%
+
+# generate csv file of pairs and intersection size
+
+# matching to self
+df_self = pd.DataFrame({'cell_type1': hit_genes_dict.keys(), 
+                        'cell_type2': hit_genes_dict.keys(), 
+                        'n_intersect': [len(x) for x in hit_genes_dict.values()],
+                        'n_genes1': [len(x) for x in hit_genes_dict.values()],
+                        'intersect_list': [','.join(x) for x in hit_genes_dict.values()] })
+
+# concatenate and sort
+df_out = (pd.concat([df_intersect, df_self], axis=0)
+    .sort_values(by=["cell_type1", "cell_type2"])
+)
+
+df_out.to_csv(directory.joinpath("pairwise_intersects.txt"), sep='\t', index=False)
+
+# %%
