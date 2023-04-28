@@ -10,6 +10,10 @@ import re
 from gprofiler import GProfiler
 
 directory = Path(__file__).resolve().parent.parent
+color_screens = '#3863a6'
+color_go= '#a36dc2'
+color_intersect = "#4e7846"
+
 
 # function to wrap a comma-joined gene list by making a break after a few commas
 def wrap_gene_names(text):
@@ -53,13 +57,15 @@ app.layout = html.Div([
     dash_table.DataTable(data=None,
         page_size=12, 
         id='bar_chart',
-        sort_action="native"
+        sort_action="native",
+        style_header={'backgroundColor': color_screens, 'color': '#f5f5f5'}
     ),
     html.H3(children='Functional GO term enrichment analysis', style={'textAlign':'left'}),
     dash_table.DataTable(
         page_size=8, 
         id='gene_ontology',
-        sort_action="native"
+        sort_action="native",
+        style_header={'backgroundColor': color_go, 'color': '#f5f5f5'}
     ),
     html.H2(children='Comparisons to other cell types', style={'textAlign':'left'}),
     dcc.Graph(figure={}, id='graph-content-intersect'),
@@ -95,7 +101,7 @@ def update_graph_genehits(value):
                  hover_data={'Genes': True, 'Number of Hits': False},
                  template="seaborn")
     fig.update_layout(hovermode='x', xaxis_title="Number of Hits", yaxis_title="Frequency")
-    fig.update_traces(showlegend=False)
+    fig.update_traces(showlegend=False, marker_color=color_screens)
     return fig
 
 ##########
@@ -123,6 +129,13 @@ def update_rows_go(value):
     )
     results = results.loc[results.source.str.startswith('GO:'), ['source', 'native', 'name', 'p_value']]
     results['p_value'] = [format(x, '.3e') for x in results['p_value']]
+    results = results.rename(columns = {
+            'source': "Source",
+            'native': "GO ID",
+            'name': "Term",
+            'p_value': "Significance"
+        }
+    )
     return results.to_dict('records')
 
 ##########
@@ -144,7 +157,7 @@ def update_graph_intersect(value):
                 hover_data={'Genes in Common': True, 'Number of Intersects': True},
                 template="seaborn")
     fig.update_layout(hovermode='x', yaxis_title="Genes in Common")
-    fig.update_traces(marker_color='#4e7846')
+    fig.update_traces(marker_color=color_intersect)
     fig.update_xaxes(range=[-0.5, 25.5]) # pre-zoom into top 25 compared cell types
     return fig
 
