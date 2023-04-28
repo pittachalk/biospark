@@ -7,6 +7,7 @@ import numpy as np
 import plotly.express as px
 from pathlib import Path
 import re
+from gprofiler import GProfiler
 
 directory = Path(__file__).resolve().parent.parent
 
@@ -46,16 +47,22 @@ app = Dash(__name__)
 app.layout = html.Div([
     html.H1(children='Top Gene Hits in BioGRID CRISPR Screens', style={'textAlign':'center'}),
     html.H2(children='Choose cell type', style={'textAlign':'left'}),
-    dcc.Dropdown(df['Cell Type'].unique(), 'Breast', id='dropdown-selection'),
+    dcc.Dropdown(df['Cell Type'].unique(), 'Breast*', id='dropdown-selection'),
+    html.H3(children='Recurring genes across screens', style={'textAlign':'left'}),
     dcc.Graph(figure={}, id='graph-content-genehits'),
-    dash_table.DataTable(
+    dash_table.DataTable(data=None,
         page_size=12, 
         id='bar_chart',
         sort_action="native"
     ),
-    html.H2(children='Comparisons to other cell types (double click to zoom out)', style={'textAlign':'left'}),
+    html.H3(children='Functional GO term enrichment analysis', style={'textAlign':'left'}),
+    dash_table.DataTable(
+        page_size=8, 
+        id='gene_ontology',
+        sort_action="native"
+    ),
+    html.H2(children='Comparisons to other cell types', style={'textAlign':'left'}),
     dcc.Graph(figure={}, id='graph-content-intersect'),
-    # html.P(children='Here is some dummy text.', style={'textAlign':'left'}),
     html.Hr()
 ])
 
@@ -104,6 +111,23 @@ def update_rows(value):
 ##########
 
 @callback(
+    Output('gene_ontology', 'data'),
+    Input('dropdown-selection', 'value')
+)
+
+def update_rows_go(value):
+    gp = GProfiler(return_dataframe = True)
+    results = gp.profile(
+        organism='hsapiens', 
+        query=list(df.query("`Cell Type`==@value")['Gene'])
+    )
+    results = results.loc[results.source.str.startswith('GO:'), ['source', 'native', 'name', 'p_value']]
+    results['p_value'] = [format(x, '.3e') for x in results['p_value']]
+    return results.to_dict('records')
+
+##########
+
+@callback(
     Output('graph-content-intersect', 'figure'),
     Input('dropdown-selection', 'value')
 )
@@ -115,13 +139,13 @@ def update_graph_intersect(value):
     )
 
     # create interactive bar chart to visualise this data 
-    fig = px.bar(tmp_df, #.iloc[0:20],  # show top hits
+    fig = px.bar(tmp_df, 
                 x="Compared Cell Type", y="Number of Intersects", 
                 hover_data={'Genes in Common': True, 'Number of Intersects': True},
                 template="seaborn")
     fig.update_layout(hovermode='x', yaxis_title="Genes in Common")
     fig.update_traces(marker_color='#4e7846')
-    fig.update_xaxes(range=[-0.5, 25.5])
+    fig.update_xaxes(range=[-0.5, 25.5]) # pre-zoom into top 25 compared cell types
     return fig
 
 ##########
