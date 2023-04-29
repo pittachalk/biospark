@@ -20,3 +20,7 @@ dependencies:
   - statsmodels
   - scikit-learn
   - tqdm
+  - pip
+  - pip:
+    - upsetplot
+    - gprofiler-official>=1
