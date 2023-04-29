@@ -159,6 +159,7 @@ def update_graph_intersect(value):
     fig.update_layout(hovermode='x', yaxis_title="Genes in Common")
     fig.update_traces(marker_color=color_intersect)
     fig.update_xaxes(range=[-0.5, 25.5]) # pre-zoom into top 25 compared cell types
+    fig.update_xaxes(type="category", rangeslider_visible=True)
     return fig
 
 ##########
