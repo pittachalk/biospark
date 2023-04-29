@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# plotly scrolling: https://community.plotly.com/t/how-to-add-a-horizontal-scroll-to-a-plot-with-100-of-candlesticks-can-display-first-10/69839/3
+
 from dash import Dash, html, dash_table, dcc, callback, Output, Input
 import pandas as pd
 import numpy as np
@@ -33,6 +35,9 @@ df = df.rename(
         'gene_ensembl': "Ensembl ID"
     }
 )
+
+# get dataframe to lookup number of screens
+n_screens_lookup = df[["Cell Type", "Number of Screens"]].drop_duplicates().set_index("Cell Type")
 
 df_intersect = pd.read_table(directory.joinpath('data/pairwise_intersects.txt'))
 df_intersect = df_intersect.rename(
@@ -96,12 +101,18 @@ def update_graph_genehits(value):
         return result
     df_agg['Genes'] = [wrap_gene_names(x) for x in df_agg['Genes']]
 
+    # add n_screens to x axis label
+    n_screens = n_screens_lookup.loc[value].item()
+    xaxis_title = f"Number of Hits (out of {n_screens} screens)"
+
     # create interactive bar chart to visualise this data 
     fig = px.bar(df_agg, x="Number of Hits", y="Frequency", 
                  hover_data={'Genes': True, 'Number of Hits': False},
-                 template="seaborn")
-    fig.update_layout(hovermode='x', xaxis_title="Number of Hits", yaxis_title="Frequency")
+                 template="seaborn", log_y=True)
+    fig.update_layout(hovermode='x', xaxis_title=xaxis_title, yaxis_title="Frequency")
     fig.update_traces(showlegend=False, marker_color=color_screens)
+    fig.update_xaxes(type="linear", range=[0.5, n_screens+0.5], rangeslider_visible=True)
+    fig.update_yaxes(dtick=1) 
     return fig
 
 ##########
@@ -111,7 +122,7 @@ def update_graph_genehits(value):
     Input('dropdown-selection', 'value')
 )
 def update_rows(value):
-    dff = df[df['Cell Type']==value]
+    dff = df[df['Cell Type']==value].drop("Number of Screens", axis=1)
     return dff.sort_values("Number of Hits", ascending=False).to_dict('records')
 
 ##########
