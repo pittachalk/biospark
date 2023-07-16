@@ -7,7 +7,7 @@ This is the code repository for our project with a pharmaceutical company as par
 
 [![App demo](assets/app_screenshot.png)](https://www.youtube.com/watch?v=6jy8oFITiXo "App demo")
 
-The app is written using the Plotly package in Python, with additional code in R and Python for preprocessing and cleaning the data. You can view a video demo of the app [here](https://www.youtube.com/watch?v=6jy8oFITiXo).
+The app is written using the Plotly package in Python, with additional code in Bash, R and Python for data preprocessing. You can view a video demo of the app [here](https://www.youtube.com/watch?v=6jy8oFITiXo).
 
 ## Running the app
 Download the repository.
@@ -29,15 +29,15 @@ python script/app.py
 
 The app has the following functionalities:
 
-* Dropdown menu to choose different cell types.
+* Dropdown menu to choose between different cell types.
 * Interactive bar charts to demonstrate frequently occuring gene hits across a particular cell type(s).
 * Tables with sorting functionality.
 * Functional enrichment with Gene Ontology.
-* Double clicking a gene name to give pop-up information (you need to download the [Gene Information eXtension](https://gene-info.org/) Chrome extension for this).
+* Double clicking a gene name to give pop-up information about said gene (you need to download the [Gene Information eXtension](https://gene-info.org/) Chrome extension).
 
 
 ## Diving deeper
-If you're interested in diving deeper into the code we used to process and clean up the data, you can look under the subdirectory `script/`. The scripts are prefixed with a number to show the order in which they are meant to be run.
+If you're interested in diving deeper into the code used to process and clean the data, you can look under the subdirectory `script/`. The scripts are prefixed with a number to show the order in which they are meant to be run.
 
 ### R environment
 You might wish to install a virtual environment for the R scripts using the `renv` dependency manager. Run `R` in the root of this repository, then type the following:
@@ -50,7 +50,7 @@ renv::restore()
 ```
 
 ### Downloading additional data
-The raw data files showing the hits from the CRISPR screens were not committed to the repository because of their large size. These were originally downloaded [here](https://downloads.thebiogrid.org/File/BioGRID-ORCS/Release-Archive/BIOGRID-ORCS-1.1.13/BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens.tar.gz), with information about the file specification [here](https://wiki.thebiogrid.org/doku.php/orcs:downloads). We do include in this repository is an Excel version of the index file to easily browse the cell types.
+The raw data files showing the hits from the CRISPR screens were not committed to the repository because of their large size. These were originally downloaded [here](https://downloads.thebiogrid.org/File/BioGRID-ORCS/Release-Archive/BIOGRID-ORCS-1.1.13/BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens.tar.gz), with information about the file specification [here](https://wiki.thebiogrid.org/doku.php/orcs:downloads). We do include here an Excel version of the index file to easily browse the metadata of the screens.
 
 To download the raw files:
 ```sh
