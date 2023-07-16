@@ -56,7 +56,7 @@ app = Dash(__name__)
 app.layout = html.Div([
     html.H1(children='Top Gene Hits in BioGRID CRISPR Screens', style={'textAlign':'center'}),
     html.H2(children='Choose cell type', style={'textAlign':'left'}),
-    dcc.Dropdown(df['Cell Type'].unique(), 'Breast*', id='dropdown-selection'),
+    dcc.Dropdown(df['Cell Type'].unique(), 'Breast', id='dropdown-selection'),
     html.H3(children='Recurring genes across screens', style={'textAlign':'left'}),
     dcc.Graph(figure={}, id='graph-content-genehits'),
     dash_table.DataTable(data=None,
@@ -176,5 +176,5 @@ def update_graph_intersect(value):
 ##########
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
 

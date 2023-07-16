@@ -1,39 +1,46 @@
-# Biospark Challenge 2022/23
+# Cambridge Gravity Biospark Challenge 2022/23
 
-## Data download
-Taken from here: https://downloads.thebiogrid.org/File/BioGRID-ORCS/Release-Archive/BIOGRID-ORCS-1.1.13/BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens.tar.gz
+[![Cambridge Gravity](assets/cambridge_gravity.png)](http://www.gravity.cam.ac.uk/ "Cambridge Gravity")
+[![Biospark](assets/biospark.jpg)](http://www.gravity.cam.ac.uk/bio-spark/ "Biospark")
 
-Information about the file format: https://wiki.thebiogrid.org/doku.php/orcs:downloads
+This is the code repository for our project with a pharmaceutical company as part of Cambridge Gravity's [Biospark](http://www.gravity.cam.ac.uk/bio-spark/) programme. We designed a user-friendly, interactive platform to integrate and visualise pooled CRISPR screen data from [BioGRID ORCS](https://orcs.thebiogrid.org/), which allows us to discover and compare common gene hits across a plethora of human cell types.
 
+[![App demo](assets/app_screenshot.png)](https://www.youtube.com/watch?v=6jy8oFITiXo "App demo")
+
+The app is written using the Plotly package in Python, with additional code in Bash, R and Python for data preprocessing. You can view a video demo of the app [here](https://www.youtube.com/watch?v=6jy8oFITiXo).
+
+## Running the app
+Download the repository.
 ```sh
-mkdir data/
-cd data/
-
-# download data and unzip
-wget https://downloads.thebiogrid.org/Download/BioGRID-ORCS/Release-Archive/BIOGRID-ORCS-1.1.13/BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens.tar.gz
-tar -xzvf BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens.tar.gz
-
-# remove unzipped file afterwards
-rm BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens.tar.gz
+git clone git@github.com:pittachalk/biospark.git
 ```
 
-By default, these raw data files are not committed onto GitHub because of their large size. However, present in this repository is an Excel version of the Index file, which is easier to browse.
-
-Also included in `data/` is `metadata_celltype.csv`, which is a (draft) mapping of the cell lines (`CELL_TYPE`) into broader cell types (`CELL_TYPE_BROAD`).
-
-Manually download `homo_sapiens_gene_id.txt` from NCBI https://www.ncbi.nlm.nih.gov/gene/?term=Homo+sapiens.
-
-## Environment setup
-### Conda (Python)
-Download Miniconda or Anaconda and use the `conda_env.yml` to create the environment. I've included some commonly used data science and plotting related packages for the time being.
-
+Download [Miniconda](https://docs.conda.io/en/latest/miniconda.html)/[Anaconda](https://www.anaconda.com/) and create the Conda environment with all the required dependencies.
 ```sh
-conda install -c conda-forge mamba
-mamba env create -f conda_env.yml
+cd biospark/
+conda env create -f conda_env.yml
+conda activate biospark
 ```
 
-### R
-Using the Terminal, `cd` into the root of this repository and start R. Then, run the following commands to install the dependency manager `renv` and use these commands to recreate the enviroment:
+Run the app, which should be deployed on `localhost:8050`.
+```sh
+python script/app.py
+```
+
+The app has the following functionalities:
+
+* Dropdown menu to choose between different cell types.
+* Interactive bar charts to demonstrate frequently occuring gene hits across a particular cell type(s).
+* Tables with sorting functionality.
+* Functional enrichment with Gene Ontology.
+* Double clicking a gene name to give pop-up information about said gene (you need to download the [Gene Information eXtension](https://gene-info.org/) Chrome extension).
+
+
+## Diving deeper
+If you're interested in diving deeper into the code used to process and clean the data, you can look under the subdirectory `script/`. The scripts are prefixed with a number to show the order in which they are meant to be run.
+
+### R environment
+You might wish to install a virtual environment for the R scripts using the `renv` dependency manager. Run `R` in the root of this repository, then type the following:
 ```r
 install.packages("renv")
 
@@ -42,16 +49,20 @@ renv::activate()
 renv::restore()
 ```
 
-To use this environment in the RStudio IDE, use `File` > `Open Project` to choose the root of this repository to start a new project. You will see a `.proj` file created.
+### Downloading additional data
+The raw data files showing the hits from the CRISPR screens were not committed to the repository because of their large size. These were originally downloaded [here](https://downloads.thebiogrid.org/File/BioGRID-ORCS/Release-Archive/BIOGRID-ORCS-1.1.13/BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens.tar.gz), with information about the file specification [here](https://wiki.thebiogrid.org/doku.php/orcs:downloads). We do include here an Excel version of the index file to easily browse the metadata of the screens.
 
-More information about `renv`: https://rstudio.github.io/renv/articles/renv.html
+To download the raw files:
+```sh
+cd data/
+wget https://downloads.thebiogrid.org/Download/BioGRID-ORCS/Release-Archive/BIOGRID-ORCS-1.1.13/BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens.tar.gz
+tar -xzvf BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens.tar.gz
+rm BIOGRID-ORCS-ALL-homo_sapiens-1.1.13.screens.tar.gz 
+```
 
-### GitHub
-We should work with our independent branches and not send any direct commits to the `master` branch. The latter should only updated via pull requests.
+### Other files
+Inside `data/` is `metadata_celltype.csv`, which is our manual curation mapping of the cell lines (`CELL_TYPE`) into broader cell types (`CELL_TYPE_BROAD`).
 
-I recommend putting in pull requests often for small changes, rather than leaving everything as a huge chunk.
+`homo_sapiens_gene_id.txt` was downloaded from [NCBI](https://www.ncbi.nlm.nih.gov/gene/?term=Homo+sapiens) to resolve ambiguities between gene IDs.
 
-Good tutorials about GitHub branching and collaboration.
-* Branching: https://www.youtube.com/watch?v=QV0kVNvkMxc
-* GitHub collaboration: https://www.youtube.com/watch?v=MnUd31TvBoU
 
